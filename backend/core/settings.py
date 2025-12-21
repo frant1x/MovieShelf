@@ -26,8 +26,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "users",
 ]
 
+# Custom user model
+AUTH_USER_MODEL = "users.User"
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    "users.auth_backends.EmailBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 
 # Middleware
 MIDDLEWARE = [
