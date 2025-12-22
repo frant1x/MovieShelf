@@ -1,6 +1,5 @@
 import datetime
 from django.db import models
-from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 
 
@@ -17,7 +16,7 @@ class CustomUserManager(BaseUserManager):
 
 
 # Custom user model
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser):
     """Custom user model that uses email as the unique identifier."""
 
     username = models.CharField(unique=True, max_length=30, null=True, blank=True)
