@@ -1,11 +1,28 @@
-import { Container, Nav } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom'; // Імпортуємо NavLink
-import logo from '../assets/images/logo.png';
+import { useAuth } from "../context/AuthContext";
 
-const Header = () => {
+const Home = () => {
+  const { user, logout } = useAuth();
+
   return (
-    <div>Home</div>
+    <div>
+      {user ? (
+        <div>
+          <p>Привіт, <strong>{user.username || user.name}</strong>!</p>
+          <p>Твої дані з контексту:</p>
+          <pre>
+            {JSON.stringify(user, null, 2)}
+          </pre>
+          <button onClick={logout}>Вийти з акаунта</button>
+        </div>
+      ) : (
+        <div>
+          <p>Ви зараз не авторизовані.</p>
+          <p>Статус: Гість</p>
+          <p>Щоб побачити свої дані, потрібно увійти в систему.</p>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default Header;
+export default Home;

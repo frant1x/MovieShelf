@@ -18,7 +18,7 @@ class UserView(viewsets.ModelViewSet):
         """
         Визначаємо права доступу для кожної дії.
         """
-        if self.action in ["create", "login", "me"]:
+        if self.action in ["create", "login", "logout", "csrf"]:
             # Реєстрація та логін доступні всім
             return [permissions.AllowAny()]
         # Решта дій (me, list, update) потребують авторизації
@@ -57,6 +57,7 @@ class UserView(viewsets.ModelViewSet):
             {"detail": "Невірний логін або пароль"}, status=status.HTTP_401_UNAUTHORIZED
         )
 
+    @method_decorator(ensure_csrf_cookie)
     @action(detail=False, methods=["post"])
     def logout(self, request):
         """
@@ -65,6 +66,7 @@ class UserView(viewsets.ModelViewSet):
         logout(request)
         return Response({"detail": "Вихід успішний"}, status=status.HTTP_200_OK)
 
+    @method_decorator(ensure_csrf_cookie)
     @action(detail=False, methods=["get", "put", "patch", "delete"])
     def me(self, request):
         """
