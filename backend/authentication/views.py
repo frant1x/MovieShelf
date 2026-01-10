@@ -5,7 +5,6 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
 from .models import User
 from .serializers import UserSerializer
 
@@ -16,78 +15,75 @@ class UserView(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """
-        Визначаємо права доступу для кожної дії.
+        Determine permissions for each action.
         """
         if self.action in ["create", "login", "logout", "csrf"]:
-            # Реєстрація та логін доступні всім
             return [permissions.AllowAny()]
-        # Решта дій (me, list, update) потребують авторизації
         return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
         """
-        Обмежуємо доступ до даних на рівні бази.
+        Limit data access at the database level.
         """
         user = self.request.user
         if user.is_authenticated:
-            # Звичайний користувач бачить тільки себе.
-            # Якщо ти адмін (is_staff), бачиш усіх.
             if user.is_staff:
                 return User.objects.all()
             return User.objects.filter(id=user.id)
         return User.objects.none()
 
+    def create(self, request):
+        """
+        Endpoint for new user registration.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        login(request, user, backend="authentication.auth_backends.EmailBackend")
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     @method_decorator(ensure_csrf_cookie)
     @action(detail=False, methods=["post"])
     def login(self, request):
         """
-        Ендпоінт для входу. Встановлює сесійну куку.
+        Endpoint for login. Sets the session cookie.
         """
-        username = request.data.get("username")
+        email = request.data.get("email")
         password = request.data.get("password")
-
-        user = authenticate(request, username=username, password=password)
-
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
             serializer = self.get_serializer(user)
             return Response(serializer.data)
-
         return Response(
-            {"detail": "Невірний логін або пароль"}, status=status.HTTP_401_UNAUTHORIZED
+            {"detail": "Invalid email or password"}, status=status.HTTP_401_UNAUTHORIZED
         )
 
     @method_decorator(ensure_csrf_cookie)
     @action(detail=False, methods=["post"])
     def logout(self, request):
         """
-        Ендпоінт для виходу. Видаляє сесію на сервері.
+        Endpoint for logout. Removes the session on the server.
         """
         logout(request)
-        return Response({"detail": "Вихід успішний"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Logout successful"}, status=status.HTTP_200_OK)
 
     @method_decorator(ensure_csrf_cookie)
     @action(detail=False, methods=["get", "put", "patch", "delete"])
     def me(self, request):
         """
-        Ендпоінт для роботи з профілем поточного користувача:
-        GET /api/users/me/ -> отримати дані
-        PUT /api/users/me/ -> оновити повністю
-        DELETE /api/users/me/ -> видалити акаунт
+        Endpoint for managing the current user's profile
         """
         user = request.user
-
         if request.method == "GET":
             serializer = self.get_serializer(user)
             return Response(serializer.data)
-
         elif request.method in ["PUT", "PATCH"]:
             partial = request.method == "PATCH"
             serializer = self.get_serializer(user, data=request.data, partial=partial)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
-
         elif request.method == "DELETE":
             user.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -95,7 +91,6 @@ class UserView(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def csrf(self, request):
         """
-        Допоміжний ендпоінт для отримання CSRF-токену.
-        Корисно викликати при першому завантаженні React-додатка.
+        Helper endpoint to retrieve the CSRF token.
         """
         return Response({"detail": "CSRF cookie set", "token": get_token(request)})

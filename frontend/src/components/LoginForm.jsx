@@ -1,17 +1,27 @@
 import { useState } from 'react'
+import useAuth from '../hooks/useAuth';
 import { Form, Button, FloatingLabel } from 'react-bootstrap';
 import useModal from "../hooks/useModal";
 
 const LoginForm = () => {
+    const { login } = useAuth();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const { openRegister } = useModal();
+    const { openRegister, closeForm } = useModal();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        console.log('Email:', email);
-        console.log('Password:', password);
+        const result = await login({ 
+            email: email, 
+            password: password 
+        });
+        if (result.success) {
+            closeForm();
+        } else {
+            console.error('Login error:', result.error);
+        }
     }
 
     return (

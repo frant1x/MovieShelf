@@ -4,25 +4,46 @@ import api from "../api/api";
 const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const updateUserData = (userData) => {
+    setUser(userData);
+    if (userData) {
+      localStorage.setItem("user", JSON.stringify(userData));
+    } else {
+      localStorage.removeItem("user");
+    }
+  };
+
+  const register = async (userData) => {
+    try {
+      await api.get("/auth/csrf/");
+      const response = await api.post("/auth/", userData);
+      updateUserData(response.data);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.response?.data };
+    }
+  }
+
+  const login = async (credentials) => {
+    try {
+      await api.get("/auth/csrf/");
+      const response = await api.post("/auth/login/", credentials);
+      updateUserData(response.data);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.response?.data };
+    }
+  };
 
   const logout = async () => {
     try {
       await api.post("/auth/logout/");
     } finally {
-      setUser(null);
-      localStorage.removeItem("user");
+      updateUserData(null);
     }
-  };
-
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   useEffect(() => {
@@ -30,16 +51,14 @@ const AuthProvider = ({ children }) => {
       try {
         await api.get("/auth/csrf/");
         const response = await api.get("/auth/me/");
-        login(response.data);
+        updateUserData(response.data);
       } catch (error) {
-        console.error("Сесія недійсна або відсутня");
-        setUser(null);
-        localStorage.removeItem("user");
+        console.error("Session is invalid or missing");
+        updateUserData(null);
       } finally {
         setLoading(false);
       }
     };
-
     verifySession();
   }, []);
 
@@ -60,6 +79,7 @@ const AuthProvider = ({ children }) => {
 
   const value = useMemo(() => ({
     user,
+    register,
     login,
     logout,
     loading,

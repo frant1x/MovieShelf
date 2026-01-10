@@ -1,31 +1,43 @@
 import { useState } from 'react'
+import useAuth from '../hooks/useAuth';
 import { Form, Button, FloatingLabel } from 'react-bootstrap';
 import useModal from "../hooks/useModal";
 
 const RegisterForm = () => {
+    const { register } = useAuth();
+
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const { openLogin } = useModal();
+    const { openLogin, closeForm } = useModal();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        console.log('Email:', email);
-        console.log('Password:', password);
+        const result = await register({ 
+            username: username, 
+            email: email, 
+            password: password 
+        });
+        if (result.success) {
+            closeForm();
+        } else {
+            console.error('Registration error:', result.error);
+        }
     }
 
     return (
         <Form onSubmit={handleSubmit} className="p-3">
-            <FloatingLabel controlId="floatingInput" label="Username" className="mb-3">
+            <FloatingLabel controlId="username" label="Username" className="mb-3">
                 <Form.Control 
                     type="text"
-                    value={email}
+                    value={username}
                     placeholder="Username"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
                 />
             </FloatingLabel>
-            <FloatingLabel controlId="floatingInput" label="Email address" className="mb-3">
+            <FloatingLabel controlId="email" label="Email address" className="mb-3">
                 <Form.Control 
                     type="email"
                     value={email}
@@ -34,7 +46,7 @@ const RegisterForm = () => {
                     required
                 />
             </FloatingLabel>
-            <FloatingLabel controlId="floatingPassword" label="Password" className="mb-3">
+            <FloatingLabel controlId="password" label="Password" className="mb-3">
                 <Form.Control 
                     type="password" 
                     value={password}
