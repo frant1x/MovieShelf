@@ -25,7 +25,7 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       return { success: false, error: error.response?.data };
     }
-  }
+  };
 
   const login = async (credentials) => {
     try {
@@ -77,20 +77,19 @@ const AuthProvider = ({ children }) => {
     return () => api.interceptors.response.eject(interceptor);
   }, []);
 
-  const value = useMemo(() => ({
-    user,
-    register,
-    login,
-    logout,
-    loading,
-    isAuthenticated: !!user
-  }), [user, loading]);
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      register,
+      login,
+      logout,
+      loading,
+      isAuthenticated: !!user,
+    }),
+    [user, loading]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export { AuthContext, AuthProvider };

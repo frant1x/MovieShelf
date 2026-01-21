@@ -1,8 +1,13 @@
 import { Container, Row, Col, Nav, Image } from "react-bootstrap";
-import logo from "../assets/images/logo.png";
+import logo from "../../assets/images/logo.png";
 import { NavLink } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import useModal from "../../hooks/useModal";
 
 const Footer = () => {
+  const { user } = useAuth();
+  const { openLogin } = useModal();
+
   return (
     <Container>
       <Row
@@ -56,13 +61,22 @@ const Footer = () => {
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link
-                as={NavLink}
-                to="/profile"
-                className="px-2 text-body-secondary"
-              >
-                Profile
-              </Nav.Link>
+              {user ? (
+                <Nav.Link
+                  as={NavLink}
+                  to="/profile"
+                  className="px-2 text-body-secondary"
+                >
+                  Profile
+                </Nav.Link>
+              ) : (
+                <Nav.Link
+                  onClick={openLogin}
+                  className="px-2 text-body-secondary"
+                >
+                  Sign In
+                </Nav.Link>
+              )}
             </Nav.Item>
           </Nav>
         </Col>

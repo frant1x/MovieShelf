@@ -1,8 +1,8 @@
 import { Container, Nav, Image } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
-import logo from "../assets/images/logo.png";
-import useAuth from "../hooks/useAuth";
-import useModal from "../hooks/useModal";
+import logo from "../../assets/images/logo.png";
+import useAuth from "../../hooks/useAuth";
+import useModal from "../../hooks/useModal";
 
 const Header = () => {
   const { user } = useAuth();
@@ -16,7 +16,7 @@ const Header = () => {
           className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
         >
           <Image
-            className="bi me-2"
+            className="me-2"
             src={logo}
             alt="Logo"
             width="40"

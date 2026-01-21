@@ -1,7 +1,7 @@
 import { Container, Button, Image, Row, Col } from "react-bootstrap";
 import logo from "../assets/images/logo.png";
 import { NavLink } from "react-router-dom";
-import Feature from "./Feature";
+import Feature from "../components/ui/Feature";
 
 const Home = () => {
   const featuresData = [
@@ -46,7 +46,7 @@ const Home = () => {
           <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <Button
               as={NavLink}
-              to="/lists"
+              to="/profile"
               variant="primary"
               size="lg"
               className="px-4 gap-3"
