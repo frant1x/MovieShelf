@@ -6,6 +6,8 @@ import Footer from "./components/layout/Footer";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Profile from "./pages/profile/Profile";
 import ProfileOverview from "./pages/profile/ProfileOverview";
+import ProfileLists from "./pages/profile/ProfileLists";
+import CreateList from "./pages/profile/CreateList";
 
 const App = () => {
   return (
@@ -19,8 +21,9 @@ const App = () => {
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Profile />}>
                 <Route index element={<ProfileOverview />} />
-                {/* <Route path="lists" element={<ProfileLists />} />
-                <Route path="movies" element={<ProfileMovies />} />
+                <Route path="lists" element={<ProfileLists />} />
+                <Route path="lists/new" element={<CreateList />} />
+                {/* <Route path="movies" element={<ProfileMovies />} />
                 <Route path="reviews" element={<ProfileReviews />} />
                 <Route path="settings" element={<ProfileSettings />} /> */}
               </Route>

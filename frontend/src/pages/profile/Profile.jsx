@@ -1,6 +1,6 @@
 import useAuth from "../../hooks/useAuth";
 import { Container, Row, Card, Col } from "react-bootstrap";
-import ProfileHeader from "../../components/ui/ProfileHeader";
+import ProfileHeader from "../../components/layout/ProfileHeader";
 import ProfileSidebar from "../../components/layout/ProfileSidebar";
 import { Outlet } from "react-router-dom";
 
