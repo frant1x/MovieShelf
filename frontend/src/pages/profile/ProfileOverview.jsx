@@ -27,8 +27,8 @@ const ProfileOverview = () => {
           link={{ to: "/profile/lists", text: "All lists" }}
         />
         <ListSection
-          recentLists={recentLists}
-          recentMovies={recentMovies}
+          lists={recentLists}
+          movies={recentMovies}
           no_poster={no_poster}
         />
       </section>

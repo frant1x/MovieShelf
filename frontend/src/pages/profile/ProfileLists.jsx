@@ -1,11 +1,27 @@
 import { useOutletContext } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../api/api";
 import SectionHeader from "../../components/ui/SectionHeader";
 import no_poster from "../../assets/images/no-poster.png";
 import ListSection from "../../components/ui/ListSection";
 
 const ProfileLists = () => {
-  const recentLists = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const recentMovies = [1, 2, 3, 4, 5];
+  const movies = [];
+  const [lists, setLists] = useState([]);
+
+  useEffect(() => {
+    const fetchMyLists = async () => {
+      try {
+        const response = await api.get("lists/?mine=true");
+        setLists(response.data);
+        console.log("Fetched lists:", response.data);
+      } catch (err) {
+        console.error("Fetch lists error:", err);
+      }
+    };
+    fetchMyLists();
+  }, []);
+
   return (
     <div>
       <section className="mb-3">
@@ -17,11 +33,7 @@ const ProfileLists = () => {
             variant: "button",
           }}
         />
-        <ListSection
-          recentLists={recentLists}
-          recentMovies={recentMovies}
-          no_poster={no_poster}
-        />
+        <ListSection lists={lists} movies={movies} no_poster={no_poster} />
       </section>
     </div>
   );
