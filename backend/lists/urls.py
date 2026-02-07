@@ -3,9 +3,9 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register(r"", views.UserView)
+router.register("", views.ListView)
 
-app_name = "authentication"
+app_name = "lists"
 urlpatterns = [
     path("", include(router.urls)),
 ]

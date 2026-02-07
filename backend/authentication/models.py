@@ -1,4 +1,3 @@
-import datetime
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 
@@ -21,7 +20,7 @@ class User(AbstractBaseUser):
 
     username = models.CharField(unique=True, max_length=30, null=True, blank=True)
     email = models.EmailField(unique=True, null=True)
-    created_at = models.DateTimeField(default=datetime.datetime.now)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = "email"
     objects = CustomUserManager()

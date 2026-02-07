@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "authentication",
+    "lists",
 ]
 
 # Custom user model

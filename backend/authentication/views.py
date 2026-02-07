@@ -27,8 +27,6 @@ class UserView(viewsets.ModelViewSet):
         """
         user = self.request.user
         if user.is_authenticated:
-            if user.is_staff:
-                return User.objects.all()
             return User.objects.filter(id=user.id)
         return User.objects.none()
 
